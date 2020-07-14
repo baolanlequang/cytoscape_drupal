@@ -14,14 +14,14 @@ use Drupal\Core\Form\FormStateInterface;
  */
 class RSVPForm extends FormBase {
     /**
-     * (@inheritdoc)
+     * {@inheritdoc}
      */
     public function getFormId() {
         return 'rsvplist_email_form';
     }
 
     /**
-     * (@inheritdoc)
+     * {@inheritdoc}
      */
     public function buildForm(array $form, FormStateInterface $form_state) {
         $node = \Drupal::routeMatch()->getParameter('node');
@@ -45,7 +45,7 @@ class RSVPForm extends FormBase {
     }
 
     /**
-     * (@inheritdoc)
+     * {@inheritdoc}
      */
     public function validateForm(array &$form, FormStateInterface $form_state) {
         $value = $form_state->getValue('email');
@@ -55,7 +55,7 @@ class RSVPForm extends FormBase {
     }
 
     /**
-     * (@inheritdoc)
+     * {@inheritdoc}
      */
     public function submitForm(array &$form, FormStateInterface $form_state) {
         $messenger_service = \Drupal::service('messenger');
