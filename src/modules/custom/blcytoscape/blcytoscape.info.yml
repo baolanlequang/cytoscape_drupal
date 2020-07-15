@@ -1,0 +1,8 @@
+name: CytoScape Drupal
+type: module
+package: CytoScape Drupal
+version: 1.0
+core: '8.x'
+description: 'CytoScape for Drupal'
+configure: blcytoscape.info.admin_settings
+core_version_requirement: ^8 || ^9
