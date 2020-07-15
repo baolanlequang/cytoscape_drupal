@@ -1,0 +1,11 @@
+<?php
+/**
+ * Implements hook_theme()
+ */
+function blcytoscape_theme($existing, $type, $theme, $path) {
+    return [
+        'blcytoscape-display' => [
+            'variables' => ['test_var' => NULL, 'test_cy' => NULL],
+        ],
+    ];
+}

@@ -12,6 +12,8 @@ class BLCSDisplayController extends ControllerBase {
         return array(
             '#type' => 'markup',
             '#markup' => t('This is my BLCSDisplayController'),
+            '#theme' => 'blcytoscape-display',
+            '#test_var' => $this->t('Test Value'),
         );
     }
 }
