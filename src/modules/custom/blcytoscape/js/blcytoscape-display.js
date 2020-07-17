@@ -7,7 +7,7 @@
      'use strict';
      Drupal.behaviors.csdisplay = {
         attach: function(context, settings) {
-            $('#cy').once('csdisplay').each(function() {
+            $('#cy', context).once('csdisplay').each(function() {
                 console.log('ahihi');
                 var cy = cytoscape({
                     container: $('#cy'),

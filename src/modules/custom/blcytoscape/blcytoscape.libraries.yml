@@ -5,6 +5,9 @@ blcytoscape:
     version: 1.0
     js: 
         js/blcytoscape-display.js: {}
+    css:
+        theme:
+            css/blcytoscape.css: {}
     dependencies:
         - core/jquery
         - core/jquery.once
