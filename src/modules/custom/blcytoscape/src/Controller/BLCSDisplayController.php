@@ -9,11 +9,13 @@ use Drupal\Core\Controller\ControllerBase;
 
 class BLCSDisplayController extends ControllerBase {
     public function content() {
-        return array(
+        $build = array(
             '#type' => 'markup',
-            '#markup' => t('This is my BLCSDisplayController'),
-            '#theme' => 'blcytoscape-display',
-            '#test_var' => $this->t('Test Value'),
+            // '#markup' => '<div>' . $this->t('This is my BLCSDisplayController') . '</div><div style="height:200px; weight:200px;" id="cy"></div>',
+            '#markup' => '<div id="cy"></div>',
         );
+        $build['#attached']['library'][] = 'blcytoscape/cytoscapelib';
+        $build['#attached']['library'][] = 'blcytoscape/blcytoscape';
+        return $build;
     }
 }
