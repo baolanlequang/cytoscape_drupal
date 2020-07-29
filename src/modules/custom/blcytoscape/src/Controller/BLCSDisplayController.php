@@ -6,6 +6,7 @@
 namespace Drupal\blcytoscape\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class BLCSDisplayController extends ControllerBase {
     public function content() {
@@ -44,5 +45,40 @@ class BLCSDisplayController extends ControllerBase {
             'rows'=>1,
         ];
         return $build;
+    }
+
+    public function displayAjax() {
+        $result = array();
+        $result['elements'] = [
+            ['data'=> ['id'=>'a']],
+            ['data'=> ['id'=>'b']],
+            ['data'=> ['id'=>'ab', 'source'=>'a', 'target'=>'b']],
+        ];
+        $result['style'] = [
+            [
+                'selector'=>'node', 
+                'style'=>[
+                    'background-color'=>'#ff0000',
+                    'label'=>'data(id)'
+                ],
+            ],
+            [
+                'selector'=>'edge', 
+                'style'=>[
+                    'width'=>3,
+                    'line-color'=>'#ccc',
+                    'target-arrow-color'=>'#ccc',
+                    'target-arrow-shape'=>'triangle',
+                    'curve-style'=>'bezier'
+                ],
+            ],
+        ];
+        $result['layout'] = [
+            'name'=>'grid',
+            'rows'=>1,
+        ];
+        $response = new JsonResponse();
+        $response->setData($result);
+        return $response;
     }
 }

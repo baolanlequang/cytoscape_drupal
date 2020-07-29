@@ -1,0 +1,7 @@
+blcytoscape.content:
+    path: '/blcytoscape'
+    defaults:
+        _controller: '\Drupal\blcytoscape\Controller\BLCSDisplayController::displayAjax'
+        _title: 'BLCSDisplayController'
+    requirements:
+        _permission: 'access content'
