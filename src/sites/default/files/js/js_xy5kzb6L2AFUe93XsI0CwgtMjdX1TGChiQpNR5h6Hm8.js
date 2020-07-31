@@ -46,7 +46,7 @@
 
             $.ajax('/blcytoscape', {
               success: function(data) {
-                console.log(data);
+                // console.log(cy)
                 var cy = cytoscape({
                   container: $('.cy'),
                   elements: data.elements,
@@ -128,3 +128,4 @@
         }
     };
  })(jQuery, Drupal, drupalSettings);
+;

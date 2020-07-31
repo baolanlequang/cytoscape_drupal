@@ -1,0 +1,41 @@
+<?php
+/**
+ * Implements hook_schema().
+ *
+ */
+function blcytoscape_schema() {
+    $schema['blcytoscape'] = array(
+      'description' => 'Stores data, node id for cytoscape',
+      'fields' => array(
+        'id' => array(
+          'description' => 'The primary identifier for the record.',
+          'type' => 'serial',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'nid' => array(
+          'description' => 'The {node} .nid.',
+          'type' => 'varchar',
+          'length' => 64,
+          'not null' => FALSE,
+          'default' => 0,
+        ),
+        'elements' => array(
+          'description' => 'Json data',
+          'type' => 'text',
+          'not null' => FALSE,
+        ),
+        'created' => array(
+          'type' => 'int',
+          'not null' => TRUE,
+          'default' => 0,
+          'description' => 'Timestamp for when library was created.',
+        ),
+      ),
+      'primary key' => array('id'),
+      'indexes' => array(
+        'node' => array('nid'),
+      ),
+    );
+    return $schema;
+}

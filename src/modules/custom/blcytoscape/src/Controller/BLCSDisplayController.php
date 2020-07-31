@@ -7,6 +7,8 @@ namespace Drupal\blcytoscape\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Drupal\Core\Database\Database;
+use Drupal\Component\Serialization\Json;
 
 class BLCSDisplayController extends ControllerBase {
     public function content() {
@@ -48,12 +50,28 @@ class BLCSDisplayController extends ControllerBase {
     }
 
     public function displayAjax() {
+        $node = \Drupal::routeMatch()->getParameter('node');
+        $nid = $node->nid->value;
+
+        $select = Database::getConnection()->select('blcytoscape', 'blcy');
+        $select->fields('blcy', ['elements', 'nid']);
+        $select->condition('nid', 1);
+        $entries = $select->execute()->fetchAll(\PDO::FETCH_ASSOC);
+
         $result = array();
         $result['elements'] = [
             ['data'=> ['id'=>'a']],
             ['data'=> ['id'=>'b']],
             ['data'=> ['id'=>'ab', 'source'=>'a', 'target'=>'b']],
         ];
+        // foreach ($entries as $entry) {
+        //     // $data = Json::decode($entry['elements']);
+        //     // $contents = utf8_encode($entry['elements']);
+        //     // // $contents = '{"data":"aaa"}';
+        //     // $decodedText = html_entity_decode($entry['elements']);
+        //     // $data = json_decode($decodedText, true);
+        //     $result['elements'] = $entry['elements'];
+        // }
         $result['style'] = [
             [
                 'selector'=>'node', 
