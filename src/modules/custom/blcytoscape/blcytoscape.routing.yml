@@ -1,5 +1,5 @@
 blcytoscape.content:
-    path: '/blcytoscape'
+    path: '/blcytoscape/{type}/{node}'
     defaults:
         _controller: '\Drupal\blcytoscape\Controller\BLCSDisplayController::displayAjax'
         _title: 'BLCSDisplayController'

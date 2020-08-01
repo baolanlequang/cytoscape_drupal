@@ -9,12 +9,18 @@ use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Drupal\Core\Database\Database;
 use Drupal\Component\Serialization\Json;
+use Drupal\node\NodeInterface;
 
 class BLCSDisplayController extends ControllerBase {
     public function content() {
+
+        $node = \Drupal::routeMatch()->getParameter('node');
+        $nid = $node->nid->value;
+
         $build = array(
             '#type' => 'markup',
-            '#markup' => '<div class="cy">' . $this->t('This is my BLCSDisplayController') . '</div>',
+            // '#markup' => '<div class="cy">' . $this->t('This is my BLCSDisplayController') . '</div>',
+            '#markup' => '<div class="cy"></div>',
         );
         $build['#attached']['library'][] = 'blcytoscape/cytoscapelib';
         $build['#attached']['library'][] = 'blcytoscape/blcytoscape';
@@ -49,29 +55,36 @@ class BLCSDisplayController extends ControllerBase {
         return $build;
     }
 
-    public function displayAjax() {
-        $node = \Drupal::routeMatch()->getParameter('node');
-        $nid = $node->nid->value;
+    public function displayAjax($type, NodeInterface $node) {
+
+        $nid = 1;
+        if (isset($node) && is_numeric($node->id())) {
+            $nid = $node->id();
+        }
+        $result["node"] = $node->id();
 
         $select = Database::getConnection()->select('blcytoscape', 'blcy');
         $select->fields('blcy', ['elements', 'nid']);
-        $select->condition('nid', 1);
+        $select->condition('nid', $nid);
         $entries = $select->execute()->fetchAll(\PDO::FETCH_ASSOC);
 
         $result = array();
-        $result['elements'] = [
-            ['data'=> ['id'=>'a']],
-            ['data'=> ['id'=>'b']],
-            ['data'=> ['id'=>'ab', 'source'=>'a', 'target'=>'b']],
-        ];
-        // foreach ($entries as $entry) {
-        //     // $data = Json::decode($entry['elements']);
-        //     // $contents = utf8_encode($entry['elements']);
-        //     // // $contents = '{"data":"aaa"}';
-        //     // $decodedText = html_entity_decode($entry['elements']);
-        //     // $data = json_decode($decodedText, true);
-        //     $result['elements'] = $entry['elements'];
-        // }
+        // $result['elements'] = [
+        //     ['data'=> ['id'=>'a']],
+        //     ['data'=> ['id'=>'b']],
+        //     ['data'=> ['id'=>'ab', 'source'=>'a', 'target'=>'b']],
+        // ];
+
+        // $connection = \Drupal::database();
+        // $connection->insert('blcytoscape')->fields(array(
+        //     'nid' => 1,
+        //     'elements' => json_encode($result['elements']),
+        //     'created' => time(),
+        // ))->execute();
+
+        foreach ($entries as $entry) {
+            $result['elements'] = json_decode($entry['elements']);
+        }
         $result['style'] = [
             [
                 'selector'=>'node', 
@@ -95,6 +108,8 @@ class BLCSDisplayController extends ControllerBase {
             'name'=>'grid',
             'rows'=>1,
         ];
+        
+        // $result['nid'] = $nid;
         $response = new JsonResponse();
         $response->setData($result);
         return $response;

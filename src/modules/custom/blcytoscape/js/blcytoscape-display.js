@@ -43,8 +43,52 @@
               //   pixelRatio: 'auto'
               // });
             // });
+            
+            // $.ajax({
+            //   method: "POST",
+            //   url: "/blcytoscape",
+            //   data: {data: pathname},
+            // })
+            //   .done(function( successData ) {
+            //     console.log(successData);
+            //     var cy = cytoscape({
+            //       container: $('.cy'),
+            //       elements: successData.elements,
+            //       style: successData.style,
+            //       layout: successData.layout,
+            //       // initial viewport state:
+            //       zoom: 1,
+            //       pan: { x: 0, y: 0 },
+            //       // interaction options:
+            //       minZoom: 1e-50,
+            //       maxZoom: 1e50,
+            //       zoomingEnabled: true,
+            //       userZoomingEnabled: true,
+            //       panningEnabled: true,
+            //       userPanningEnabled: true,
+            //       boxSelectionEnabled: true,
+            //       selectionType: 'single',
+            //       touchTapThreshold: 8,
+            //       desktopTapThreshold: 4,
+            //       autolock: false,
+            //       autoungrabify: false,
+            //       autounselectify: false,
+  
+            //       // rendering options:
+            //       headless: false,
+            //       styleEnabled: true,
+            //       hideEdgesOnViewport: false,
+            //       textureOnViewport: false,
+            //       motionBlur: false,
+            //       motionBlurOpacity: 0.2,
+            //       wheelSensitivity: 1,
+            //       pixelRatio: 'auto'
+            //     });
+            //   });
 
-            $.ajax('/blcytoscape', {
+            var pathname = window.location.pathname;
+            // alert(pathname);
+            $.ajax('/blcytoscape'+pathname, {
               success: function(data) {
                 console.log(data);
                 var cy = cytoscape({
@@ -85,46 +129,6 @@
                 // alert('There was some error performing the AJAX call!');
               }
             });
-
-            //   var cy = cytoscape({
-            //     container: $('.cy'),
-            //     elements: [ // list of graph elements to start with
-            //       { // node a
-            //         data: { id: 'a' }
-            //       },
-            //       { // node b
-            //         data: { id: 'b' }
-            //       },
-            //       { // edge ab
-            //         data: { id: 'ab', source: 'a', target: 'b' }
-            //       }
-            //     ],
-            //     style: [ // the stylesheet for the graph
-            //       {
-            //         selector: 'node',
-            //         style: {
-            //           'background-color': '#666',
-            //           'label': 'data(id)'
-            //         }
-            //       },
-            //       {
-            //         selector: 'edge',
-            //         style: {
-            //           'width': 3,
-            //           'line-color': '#ccc',
-            //           'target-arrow-color': '#ccc',
-            //           'target-arrow-shape': 'triangle',
-            //           'curve-style': 'bezier'
-            //         }
-            //       }
-            //     ],
-            //     layout: {
-            //       name: 'grid',
-            //       rows: 1
-            //     } 
-            //   });
-
-            // });
         }
     };
  })(jQuery, Drupal, drupalSettings);
