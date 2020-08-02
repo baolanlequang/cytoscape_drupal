@@ -68,6 +68,8 @@ class BLCSDisplayController extends ControllerBase {
 
     public function displayAjax($type, NodeInterface $node) {
 
+        // $this->insertDemoData();
+
         $nid = 1;
         if (isset($node) && is_numeric($node->id())) {
             $nid = $node->id();
@@ -94,27 +96,16 @@ class BLCSDisplayController extends ControllerBase {
     }
 
     private function insertDemoData() {
-        $nid = 1;
-        if (isset($node) && is_numeric($node->id())) {
-            $nid = $node->id();
-        }
-        $result["node"] = $node->id();
 
         $result = array();
         $nid = 1;
-        if (isset($node) && is_numeric($node->id())) {
-            $nid = $node->id();
-        }
-        $result["node"] = $node->id();
-
-        $entries = $this->load($nid);
 
         $result = array();
-
-        foreach ($entries as $entry) {
-            $result['elements'] = json_decode($entry['elements']);
-            $result['style'] = json_decode($entry['style']);
-        }
+        $result['elements'] = [
+            ['data'=> ['id'=>'a']],
+            ['data'=> ['id'=>'b']],
+            ['data'=> ['id'=>'ab', 'source'=>'a', 'target'=>'b']],
+        ];
         $result['style'] = [
             [
                 'selector'=>'node', 
@@ -146,6 +137,10 @@ class BLCSDisplayController extends ControllerBase {
             'nid' => 1,
             'elements' => json_encode($result['elements']),
             'created' => time(),
+        ))->execute();
+        $connection->insert('blcytoscape_style')->fields(array(
+            'graphid' => 1,
+            'style' => json_encode($result['style']),
         ))->execute();
     }
 }
