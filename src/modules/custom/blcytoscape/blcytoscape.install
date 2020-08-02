@@ -37,5 +37,23 @@ function blcytoscape_schema() {
         'node' => array('nid'),
       ),
     );
+
+    $schema['blcytoscape_style'] = array(
+    'description' => 'Define style for cytoscape graph',
+    'fields' => array(
+      'graphid' => array(
+        'description' => 'The id of cytoscape graph',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'style' => array(
+        'description' => 'json style data',
+        'type' => 'text',
+        'not null' => FALSE,
+      ),
+    ),
+    'primary key' => array('graphid'),
+  );
     return $schema;
 }

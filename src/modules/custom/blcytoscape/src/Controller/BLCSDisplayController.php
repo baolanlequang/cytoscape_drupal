@@ -55,6 +55,17 @@ class BLCSDisplayController extends ControllerBase {
         return $build;
     }
 
+    protected function load($node_id) {
+        $select = Database::getConnection()->select('blcytoscape', 'blcy');
+        $select->join('blcytoscape_style', 'blcy_style', 'blcy.id = blcy_style.graphid');
+        $select
+            ->fields('blcy', ['elements', 'nid'])
+            ->fields('blcy_style', ['style'])
+            ->condition('blcy.nid', $node_id);
+        $entries = $select->execute()->fetchAll(\PDO::FETCH_ASSOC);
+        return $entries;
+    }
+
     public function displayAjax($type, NodeInterface $node) {
 
         $nid = 1;
@@ -63,27 +74,46 @@ class BLCSDisplayController extends ControllerBase {
         }
         $result["node"] = $node->id();
 
-        $select = Database::getConnection()->select('blcytoscape', 'blcy');
-        $select->fields('blcy', ['elements', 'nid']);
-        $select->condition('nid', $nid);
-        $entries = $select->execute()->fetchAll(\PDO::FETCH_ASSOC);
+        $entries = $this->load($nid);
 
         $result = array();
-        // $result['elements'] = [
-        //     ['data'=> ['id'=>'a']],
-        //     ['data'=> ['id'=>'b']],
-        //     ['data'=> ['id'=>'ab', 'source'=>'a', 'target'=>'b']],
-        // ];
-
-        // $connection = \Drupal::database();
-        // $connection->insert('blcytoscape')->fields(array(
-        //     'nid' => 1,
-        //     'elements' => json_encode($result['elements']),
-        //     'created' => time(),
-        // ))->execute();
 
         foreach ($entries as $entry) {
             $result['elements'] = json_decode($entry['elements']);
+            $result['style'] = json_decode($entry['style']);
+        }
+
+        $result['layout'] = [
+            'name'=>'grid',
+            'rows'=>1,
+        ];
+        
+        $response = new JsonResponse();
+        $response->setData($result);
+        return $response;
+    }
+
+    private function insertDemoData() {
+        $nid = 1;
+        if (isset($node) && is_numeric($node->id())) {
+            $nid = $node->id();
+        }
+        $result["node"] = $node->id();
+
+        $result = array();
+        $nid = 1;
+        if (isset($node) && is_numeric($node->id())) {
+            $nid = $node->id();
+        }
+        $result["node"] = $node->id();
+
+        $entries = $this->load($nid);
+
+        $result = array();
+
+        foreach ($entries as $entry) {
+            $result['elements'] = json_decode($entry['elements']);
+            $result['style'] = json_decode($entry['style']);
         }
         $result['style'] = [
             [
@@ -104,14 +134,18 @@ class BLCSDisplayController extends ControllerBase {
                 ],
             ],
         ];
+
+        
+
         $result['layout'] = [
             'name'=>'grid',
             'rows'=>1,
         ];
-        
-        // $result['nid'] = $nid;
-        $response = new JsonResponse();
-        $response->setData($result);
-        return $response;
+        $connection = \Drupal::database();
+        $connection->insert('blcytoscape')->fields(array(
+            'nid' => 1,
+            'elements' => json_encode($result['elements']),
+            'created' => time(),
+        ))->execute();
     }
 }
