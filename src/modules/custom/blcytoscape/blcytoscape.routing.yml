@@ -5,3 +5,11 @@ blcytoscape.content:
         _title: 'BLCSDisplayController'
     requirements:
         _permission: 'access content'
+
+blcytoscape.admin_settings:
+    path: '/admin/config/content/blcytoscape'
+    defaults:
+        _form: '\Drupal\blcytoscape\Form\BLCSSettingDisplayForm'
+        _title: 'Cytoscape List Settings'
+    requirements:
+        _permission: 'administer blcytoscape'
