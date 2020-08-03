@@ -20,6 +20,11 @@ function blcytoscape_schema() {
           'not null' => FALSE,
           'default' => 0,
         ),
+        'name' => array(
+          'description' => 'name of graph',
+          'type' => 'text',
+          'not null' => FALSE,
+        ),
         'elements' => array(
           'description' => 'Json data',
           'type' => 'text',
@@ -46,6 +51,11 @@ function blcytoscape_schema() {
         'type' => 'int',
         'not null' => TRUE,
         'default' => 0,
+      ),
+      'name' => array(
+        'description' => 'name of graph',
+        'type' => 'text',
+        'not null' => FALSE,
       ),
       'style' => array(
         'description' => 'json style data',

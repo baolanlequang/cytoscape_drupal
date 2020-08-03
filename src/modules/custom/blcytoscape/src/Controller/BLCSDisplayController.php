@@ -135,11 +135,13 @@ class BLCSDisplayController extends ControllerBase {
         $connection = \Drupal::database();
         $connection->insert('blcytoscape')->fields(array(
             'nid' => 1,
+            'name' => 'graph 1',
             'elements' => json_encode($result['elements']),
             'created' => time(),
         ))->execute();
         $connection->insert('blcytoscape_style')->fields(array(
             'graphid' => 1,
+            'name' => 'style 1',
             'style' => json_encode($result['style']),
         ))->execute();
     }
