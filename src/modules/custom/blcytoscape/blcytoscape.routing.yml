@@ -13,3 +13,11 @@ blcytoscape.admin_settings:
         _title: 'Cytoscape List Settings'
     requirements:
         _permission: 'administer blcytoscape'
+
+blcytoscape.upload_files:
+    path: '/blcytoscape/upload'
+    defaults:
+        _form: '\Drupal\blcytoscape\Form\BLCSUploadFileForm'
+        _title: 'BLCSUploadFileForm'
+    requirements:
+        _permission: 'access content'
