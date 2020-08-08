@@ -10,6 +10,9 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\file\Entity\File;
 use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\ReplaceCommand;
+use Drupal\Core\Ajax\OpenModalDialogCommand;
+use Symfony\Component\HttpFoundation\Request;
 
 
 class BLCSUploadFileForm extends FormBase {
@@ -38,26 +41,27 @@ class BLCSUploadFileForm extends FormBase {
         //     ['data'=> ['id'=>'b']],
         //     ['data'=> ['id'=>'ab', 'source'=>'a', 'target'=>'b']],
         // ];
+        // $form['#attached']['drupalSettings']['cytoscape']['style'] = [
+        //     [
+        //         'selector'=>'node', 
+        //         'style'=>[
+        //             'background-color'=>'#666',
+        //             'label'=>'data(id)'
+        //         ],
+        //     ],
+        //     [
+        //         'selector'=>'edge', 
+        //         'style'=>[
+        //             'width'=>3,
+        //             'line-color'=>'#ccc',
+        //             'target-arrow-color'=>'#ccc',
+        //             'target-arrow-shape'=>'triangle',
+        //             'curve-style'=>'bezier'
+        //         ],
+        //     ],
+        // ];
         $form['#attached']['drupalSettings']['cytoscape']['elements'] = array();
-        $form['#attached']['drupalSettings']['cytoscape']['style'] = [
-            [
-                'selector'=>'node', 
-                'style'=>[
-                    'background-color'=>'#666',
-                    'label'=>'data(id)'
-                ],
-            ],
-            [
-                'selector'=>'edge', 
-                'style'=>[
-                    'width'=>3,
-                    'line-color'=>'#ccc',
-                    'target-arrow-color'=>'#ccc',
-                    'target-arrow-shape'=>'triangle',
-                    'curve-style'=>'bezier'
-                ],
-            ],
-        ];
+        $form['#attached']['drupalSettings']['cytoscape']['style'] = array();
         $form['#attached']['drupalSettings']['cytoscape']['layout'] = [
             'name'=>'grid',
             'rows'=>1,
@@ -66,21 +70,30 @@ class BLCSUploadFileForm extends FormBase {
         $validators = array(
             'file_validate_extensions' => array('json'),
         );
-        $form['my_file'] = array(
+        $form['bl_cytoscaple_elements'] = array(
             '#type' => 'managed_file',
-            '#name' => 'my_file',
-            '#title' => t('File *'),
+            '#name' => 'bl_cytoscaple_elements',
+            '#title' => t('Elements file *'),
             '#size' => 20,
+            '#id' => 'bl_cytoscaple_elements_tmp_file',
             '#description' => t('json format only'),
             '#upload_validators' => $validators,
             '#upload_location' => 'public://blcytoscape/files/',
-            '#ajax' => array(
-                'event' => 'fade',
-                'callback' => '::formSelectChanged',
-                'wrapper' => 'cy',
-            )
         );
+
+        $form['bl_cytoscaple_style'] = array(
+            '#type' => 'managed_file',
+            '#name' => 'bl_cytoscaple_style',
+            '#title' => t('Style file *'),
+            '#size' => 20,
+            '#id' => 'bl_cytoscaple_style_file',
+            '#description' => t('json format only'),
+            '#upload_validators' => $validators,
+            '#upload_location' => 'public://blcytoscape/files/',
+        );
+
         
+
         $form['actions']['#type'] = 'actions';
         $form['actions']['submit'] = array(
             '#type' => 'submit',
@@ -95,39 +108,14 @@ class BLCSUploadFileForm extends FormBase {
    */
     public function validateForm(array &$form, FormStateInterface $form_state) {    
         
-        if ($form_state->getValue('my_file') == NULL) {
-            $form_state->setErrorByName('my_file', $this->t('File.'));
+        if ($form_state->getValue('bl_cytoscaple_elements') == NULL) {
+            $form_state->setErrorByName('bl_cytoscaple_elements', $this->t('File.'));
         }
         else {
-            $fid = $form_state->getValue('my_file');
+            $fid = $form_state->getValue('bl_cytoscaple_elements');
             $file = File::load($fid[0]);
             $file_uri = $file->getFileUri();
             $json_content = file_get_contents($file_uri);
-            $messenger_service = \Drupal::service('messenger');
-            $strMsg = "Thank for your RSVP, you are on the list for the event {$json_content}";
-            $messenger_service->addMessage(t($strMsg));
-
-            $form['#attached']['drupalSettings']['cytoscape']['elements'] = array(
-                'addd' => 'ahiih',
-            );
-            
-            // $response = new AjaxResponse();
-            // $Text = 'My Text'; /* A string that contains the text to display as a JavaScript alert.*/
-            // return $response->addCommand(new AlertCommand($Text));;
-            // $this->formSelectChanged($form, $form_state);
-
-            // $form['#attached']['library'][] = 'blcytoscape/blcytoscape_upload';
-            // $form['#attached']['drupalSettings']['cytoscape']['elements'] = [
-            //     ['data'=> ['id'=>'a']],
-            //     ['data'=> ['id'=>'b']],
-            //     ['data'=> ['id'=>'ab', 'source'=>'a', 'target'=>'b']],
-            // ];
-            // $output = $renderer->renderRoot($form);
-            // $response = new AjaxResponse();
-            // $response->setAttachments($form['#attached']);
-            // return $response->addCommand(new ReplaceCommand(NULL, $output));
-
-            
         }
     }
 
@@ -142,49 +130,5 @@ class BLCSUploadFileForm extends FormBase {
         $messenger_service->addMessage(t('Thank for your RSVP, you are on the list for the event.'));
     }
 
-    public function formSelectChanged(array &$form, FormStateInterface $form_state) {
-        $form['#attached']['drupalSettings']['cytoscape']['elements'] = [
-            ['data'=> ['id'=>'a']],
-            ['data'=> ['id'=>'b']],
-            ['data'=> ['id'=>'ab', 'source'=>'a', 'target'=>'b']],
-        ];
-        $response = new AjaxResponse();
-        $Text = 'My Text'; /* A string that contains the text to display as a JavaScript alert.*/
-        return $form;
-    }
-
-    public static function uploadAjaxCallback(&$form, FormStateInterface &$form_state, Request $request) {
-
-        // /** @var \Drupal\Core\Render\RendererInterface $renderer */
-        // $renderer = \Drupal::service('renderer');
-        // $form_parents = explode('/', $request->query
-        //   ->get('element_parents'));
-      
-        // // Retrieve the element to be rendered.
-        // $form = NestedArray::getValue($form, $form_parents);
-      
-        // // Add the special AJAX class if a new file was added.
-        // $current_file_count = $form_state
-        //   ->get('file_upload_delta_initial');
-        // if (isset($form['#file_upload_delta']) && $current_file_count < $form['#file_upload_delta']) {
-        //   $form[$current_file_count]['#attributes']['class'][] = 'ajax-new-content';
-        // }
-        // else {
-        //   $form['#suffix'] .= '<span class="ajax-new-content"></span>';
-        // }
-        // $status_messages = [
-        //   '#type' => 'status_messages',
-        // ];
-        // $form['#prefix'] .= $renderer
-        //   ->renderRoot($status_messages);
-        // $output = $renderer
-        //   ->renderRoot($form);
-        // $response = new AjaxResponse();
-        // $response
-        //   ->setAttachments($form['#attached']);
-        // return $response
-        //   ->addCommand(new ReplaceCommand(NULL, $output));
-        $Text = 'My Text'; /* A string that contains the text to display as a JavaScript alert.*/
-        return $response->addCommand(new AlertCommand($Text));;
-      }
+    
 }
