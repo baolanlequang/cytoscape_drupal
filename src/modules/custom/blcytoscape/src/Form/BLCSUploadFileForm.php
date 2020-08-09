@@ -32,7 +32,7 @@ class BLCSUploadFileForm extends FormBase {
         );
         
         $form['file_upload_details'] = array(
-            '#markup' => t('<b>The File</b><br /><div class="cy"></div>'),
+            '#markup' => t('<b>The graph</b><br /><div class="cy"></div>'),
         );
 
         $form['#attached']['library'][] = 'blcytoscape/blcytoscape_upload';
@@ -68,7 +68,7 @@ class BLCSUploadFileForm extends FormBase {
         ];
         
         $validators = array(
-            'file_validate_extensions' => array('json'),
+            'file_validate_extensions' => array('json cyjs'),
         );
         $form['bl_cytoscaple_elements'] = array(
             '#type' => 'managed_file',
@@ -76,7 +76,7 @@ class BLCSUploadFileForm extends FormBase {
             '#title' => t('Elements file *'),
             '#size' => 20,
             '#id' => 'bl_cytoscaple_elements_tmp_file',
-            '#description' => t('json format only'),
+            '#description' => t('json and cyjs format only'),
             '#upload_validators' => $validators,
             '#upload_location' => 'public://blcytoscape/files/',
         );

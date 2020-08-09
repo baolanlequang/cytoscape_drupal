@@ -44,11 +44,26 @@
 
             var fileElements = $('#bl_cytoscaple_elements_tmp_file').find('.file').children('a').attr('href')
             if (fileElements) {
-              $.getJSON(fileElements, function(cytoscapeData) {
-                // alert(cytoscapeData.elements)
-                // cy.elements = cytoscapeData.elements
-                cy.json({elements: cytoscapeData.elements })
+              $.getJSON(fileElements, function() {
+                console.log( "success" );
               })
+                .done(function(cytoscapeData) {
+                  console.log( cytoscapeData.elements );
+                  cy.json({elements: cytoscapeData.elements })
+                  cy.center()
+                })
+                .fail(function( jqxhr, textStatus, error ) {
+                  var err = textStatus + ", " + error;
+                  console.log( "Request Failed: " + err );
+                })
+                .always(function() {
+                  console.log( "complete" );
+                })
+              // $.getJSON(fileElements, function(cytoscapeData) {
+              //   // alert(cytoscapeData.elements)
+              //   // cy.elements = cytoscapeData.elements
+              //   cy.json({elements: cytoscapeData.elements })
+              // })
             }
 
             var fileStyles = $('#bl_cytoscaple_style_file').find('.file').children('a').attr('href')
@@ -56,8 +71,9 @@
               $.getJSON(fileStyles, function() {
                 console.log( "success" );
               })
-                .done(function(cytoscapeData) {
-                  cy.style().fromJson(cytoscapeData.styles).update()
+                .done(function(cytoscapeStyle) {
+                  // console.log(cytoscapeStyle[0].style)
+                  cy.style().fromJson(cytoscapeStyle[0].style).update()
                 })
                 .fail(function( jqxhr, textStatus, error ) {
                   var err = textStatus + ", " + error;
