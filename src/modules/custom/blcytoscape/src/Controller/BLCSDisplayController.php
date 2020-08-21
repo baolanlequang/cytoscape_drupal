@@ -15,43 +15,59 @@ class BLCSDisplayController extends ControllerBase {
     public function content() {
 
         $node = \Drupal::routeMatch()->getParameter('node');
-        $nid = $node->nid->value;
+        // $nid = $node->nid->value;
+        // $nid = 0;
 
-        $build = array(
-            '#type' => 'markup',
-            // '#markup' => '<div class="cy">' . $this->t('This is my BLCSDisplayController') . '</div>',
-            '#markup' => '<div class="cy"></div>',
-        );
-        $build['#attached']['library'][] = 'blcytoscape/cytoscapelib';
-        $build['#attached']['library'][] = 'blcytoscape/blcytoscape';
-        $build['#attached']['drupalSettings']['cytoscape']['elements'] = [
-            ['data'=> ['id'=>'a']],
-            ['data'=> ['id'=>'b']],
-            ['data'=> ['id'=>'ab', 'source'=>'a', 'target'=>'b']],
-        ];
-        $build['#attached']['drupalSettings']['cytoscape']['style'] = [
-            [
-                'selector'=>'node', 
-                'style'=>[
-                    'background-color'=>'#666',
-                    'label'=>'data(id)'
+        $build = array();
+        if (isset($node) && is_numeric($node->id())) {
+            $nid = $node->id();
+            $build = array(
+                '#type' => 'markup',
+                '#markup' => '<div class="cy"></div>',
+            );
+            $build['#attached']['library'][] = 'blcytoscape/cytoscapelib';
+            $build['#attached']['library'][] = 'blcytoscape/blcytoscape';
+            
+            $build['#attached']['drupalSettings']['cytoscape']['elements'] = [
+                ['data'=> ['id'=>'a']],
+                ['data'=> ['id'=>'b']],
+                ['data'=> ['id'=>'ab', 'source'=>'a', 'target'=>'b']],
+            ];
+            $build['#attached']['drupalSettings']['cytoscape']['style'] = [
+                [
+                    'selector'=>'node', 
+                    'style'=>[
+                        'background-color'=>'#666',
+                        'label'=>'data(id)'
+                    ],
                 ],
-            ],
-            [
-                'selector'=>'edge', 
-                'style'=>[
-                    'width'=>3,
-                    'line-color'=>'#ccc',
-                    'target-arrow-color'=>'#ccc',
-                    'target-arrow-shape'=>'triangle',
-                    'curve-style'=>'bezier'
+                [
+                    'selector'=>'edge', 
+                    'style'=>[
+                        'width'=>3,
+                        'line-color'=>'#ccc',
+                        'target-arrow-color'=>'#ccc',
+                        'target-arrow-shape'=>'triangle',
+                        'curve-style'=>'bezier'
+                    ],
                 ],
-            ],
-        ];
-        $build['#attached']['drupalSettings']['cytoscape']['layout'] = [
-            'name'=>'grid',
-            'rows'=>1,
-        ];
+            ];
+            $build['#attached']['drupalSettings']['cytoscape']['layout'] = [
+                'name'=>'grid',
+                'rows'=>1,
+            ];
+            
+            $build['bl_cytoscaple_graph_name'] = array(
+                '#title' => t('Graph name '.$nid),
+                '#type' => 'textfield',
+                '#size' => 25,
+                '#description' => t("Please input name for this graph"),
+                '#required' => TRUE,
+            );
+        }
+
+        
+
         return $build;
     }
 
@@ -81,8 +97,8 @@ class BLCSDisplayController extends ControllerBase {
         $result = array();
 
         foreach ($entries as $entry) {
-            $result['elements'] = json_decode($entry['elements']);
-            $result['style'] = json_decode($entry['style']);
+            $result['elements'] = json_decode($entry['elements'], true);
+            $result['style'] = json_decode($entry['style'], true);
         }
 
         $result['layout'] = [
