@@ -90,10 +90,21 @@ class BLCSSettingDisplayForm extends ConfigFormBase {
             '#type' => 'textfield',
             '#title' => t('Node is using graph'),
             '#size' => '60',
-            '#disabled' => TRUE,
-            '#value' => 'Hello, Drupal!!1',      
+            '#disabled' => TRUE,   
             '#prefix' => '<div id="edit-output">',
             '#suffix' => '</div>',
+        ];
+
+        $form['graph_display'] = array(
+            '#markup' => t('<b>The graph</b><br /><div class="cy"></div>'),
+        );
+        $form['#attached']['library'][] = 'blcytoscape/cytoscapelib';
+        $form['#attached']['library'][] = 'blcytoscape/blcytoscape';
+        $form['#attached']['drupalSettings']['cytoscape']['elements'] = array();
+        $form['#attached']['drupalSettings']['cytoscape']['style'] = array();
+        $form['#attached']['drupalSettings']['cytoscape']['layout'] = [
+            'name'=>'grid',
+            'rows'=>1,
         ];
 
         $list_nodes = $this->loadListNodes();
@@ -151,7 +162,16 @@ class BLCSSettingDisplayForm extends ConfigFormBase {
             $nodeInfo = $this->loadNodeInfo($selectedValue);
             $form['output']['#value'] = $nodeInfo['title'];
         }
+        // $form['#attached']['library'][] = 'blcytoscape/cytoscapelib';
+        // $form['#attached']['library'][] = 'blcytoscape/blcytoscape';
+        // $form['#attached']['drupalSettings']['cytoscape']['elements'] = [
+        //     ['data'=> ['id'=>'a']],
+        //     ['data'=> ['id'=>'b']],
+        //     ['data'=> ['id'=>'ab', 'source'=>'a', 'target'=>'b']],
+        // ];
+        
         // Return the prepared textfield.
         return $form['output']; 
+        // return [$form['output'], $form['#attached']];
     }
 }

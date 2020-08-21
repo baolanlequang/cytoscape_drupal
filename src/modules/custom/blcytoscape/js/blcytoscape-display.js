@@ -8,10 +8,11 @@
      Drupal.behaviors.csdisplay = {
         attach: function(context, settings) {
             $('.cy', context).once('csdisplay').each(function() {
+              console.log('ahihih');
               // console.log(drupalSettings.cytoscape.elements)
               var cy = cytoscape({
                 container: $('.cy'),
-                elements: drupalSettings.cytoscape.elements,
+                elements: '',
                 style: drupalSettings.cytoscape.style,
                 layout: drupalSettings.cytoscape.layout,
                 // initial viewport state:
@@ -42,6 +43,8 @@
                 wheelSensitivity: 1,
                 pixelRatio: 'auto'
               });
+              cy.json({elements: drupalSettings.cytoscape.elements })
+              cy.center()
             });
             
             // $.ajax({
