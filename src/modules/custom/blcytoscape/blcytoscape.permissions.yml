@@ -1,0 +1,4 @@
+administer blcytoscape:
+    title: 'Administer Cytoscape Setttings'
+    description: 'Access the Cytoscape administrative settings page'
+    retstrict access: true
