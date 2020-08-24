@@ -93,7 +93,7 @@
             // alert(pathname);
             $.ajax('/blcytoscape'+pathname, {
               success: function(data) {
-                console.log(data);
+                // console.log(data);
                 // var cy = cytoscape({
                 //   container: $('.cy'),
                 //   elements: data.elements,

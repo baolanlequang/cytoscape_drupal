@@ -11,6 +11,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\ReplaceCommand;
+use Drupal\Core\Ajax\InvokeCommand;
 
 class BLCSSettingDisplayForm extends ConfigFormBase {
     /**
@@ -37,6 +38,20 @@ class BLCSSettingDisplayForm extends ConfigFormBase {
         $entries = $select->execute()->fetchAll(\PDO::FETCH_ASSOC);
         // $entries = $select->execute()->fetchAll();
         // var_dump($entries);
+        return $entries;
+    }
+
+    /**
+     * 
+     */
+    protected function loadGraphInfo($graph_id) {
+        $select = Database::getConnection()->select('blcytoscape', 'blcy');
+        $select->join('blcytoscape_style', 'blcy_style', 'blcy.id = blcy_style.graphid');
+        $select
+            ->fields('blcy', ['elements'])
+            ->fields('blcy_style', ['style'])
+            ->condition('blcy.id', $graph_id);
+        $entries = $select->execute()->fetchAll(\PDO::FETCH_ASSOC);
         return $entries;
     }
 
@@ -98,8 +113,7 @@ class BLCSSettingDisplayForm extends ConfigFormBase {
         $form['graph_display'] = array(
             '#markup' => t('<b>The graph</b><br /><div class="cy"></div>'),
         );
-        $form['#attached']['library'][] = 'blcytoscape/cytoscapelib';
-        $form['#attached']['library'][] = 'blcytoscape/blcytoscape';
+        $form['#attached']['library'][] = 'blcytoscape/blcytoscape_settings';
         $form['#attached']['drupalSettings']['cytoscape']['elements'] = array();
         $form['#attached']['drupalSettings']['cytoscape']['style'] = array();
         $form['#attached']['drupalSettings']['cytoscape']['layout'] = [
@@ -156,22 +170,44 @@ class BLCSSettingDisplayForm extends ConfigFormBase {
     }
 
     public function formSelectChanged(array &$form, FormStateInterface $form_state) {
+        $data = array();
         if ($selectedValue = $form_state->getValue('blcytoscape_graph_list')) {
             // Get the text of the selected option. 
             $selectedText = $form['blcytoscape_graph_list']['#options'][$selectedValue];
             $nodeInfo = $this->loadNodeInfo($selectedValue);
             $form['output']['#value'] = $nodeInfo['title'];
+            $entries = $this->loadGraphInfo($selectedValue);
+            foreach ($entries as $entry) {
+                $data['elements'] = json_decode($entry['elements'], true);
+                $data['style'] = json_decode($entry['style'], true);
+            }
+            // $data['entries'] = $entries;
+            $data['node_title'] = $nodeInfo['title'];
         }
-        // $form['#attached']['library'][] = 'blcytoscape/cytoscapelib';
-        // $form['#attached']['library'][] = 'blcytoscape/blcytoscape';
+        // // $form['#attached']['library'][] = 'blcytoscape/cytoscapelib';
+        // // $form['#attached']['library'][] = 'blcytoscape/blcytoscape';
         // $form['#attached']['drupalSettings']['cytoscape']['elements'] = [
         //     ['data'=> ['id'=>'a']],
         //     ['data'=> ['id'=>'b']],
         //     ['data'=> ['id'=>'ab', 'source'=>'a', 'target'=>'b']],
         // ];
         
-        // Return the prepared textfield.
-        return $form['output']; 
-        // return [$form['output'], $form['#attached']];
+        // // Return the prepared textfield.
+        // // return $form['output']; 
+        // // return [$form['output'], $form['#attached']];
+        // $response = new AjaxResponse();
+        // return $response;
+
+        $response = new AjaxResponse();
+
+        
+        // $data['elements'] = [
+        //     ['data'=> ['id'=>'a']],
+        //     ['data'=> ['id'=>'b']],
+        //     ['data'=> ['id'=>'ab', 'source'=>'a', 'target'=>'b']],
+        // ];
+
+        $response->addCommand(new InvokeCommand(NULL, 'displayCytoScape', [$data]));
+        return $response;
     }
 }

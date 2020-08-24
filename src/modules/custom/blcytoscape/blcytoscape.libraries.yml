@@ -26,4 +26,17 @@ blcytoscape_upload:
         - core/drupal
         - core/jquery.once
         - core/drupalSettings
+blcytoscape_settings:
+    version: 1.0
+    js:
+        js/blcytoscape-display-settings.js: {}
+    css:
+        theme:
+            css/blcytoscape.css: {}
+    dependencies:
+        - blcytoscape/cytoscapelib
+        - core/jquery
+        - core/drupal
+        - core/jquery.once
+        - core/drupalSettings
     
